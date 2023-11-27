@@ -62,9 +62,6 @@ const CartList = ({ cart, updateCart }) => {
   };
 
 
-  
-
-  
 
   return (
     <div className="main-cart">
@@ -80,8 +77,9 @@ const CartList = ({ cart, updateCart }) => {
     ) : (
       <>
         {CART.map((cartItem, cartIndex) => (
+          
           <div className="cart-item" key={cartIndex}>
-            <img src={cartItem.images[0]} alt={cartItem.title} className="cart-image" />
+            <img src={`http://localhost:5000//images/${cartItem.image}`} alt={cartItem.title} className="cart-image" />
             <div className="cart-details">
               <span className="cart-name">{cartItem.title}</span>
               <div className="cart-quantity">

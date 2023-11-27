@@ -73,7 +73,8 @@ router.get('/:id', getProduct, (req, res) => {
 
 
 // UPDATE a product
-router.patch('/:id', upload.single('image'), getProduct, async (req, res) => {
+// UPDATE a product
+router.patch('/:id', getProduct, upload.single('image'), async (req, res) => {
     if (req.body.title != null) {
         res.product.title = req.body.title;
     }
@@ -84,18 +85,27 @@ router.patch('/:id', upload.single('image'), getProduct, async (req, res) => {
         res.product.price = req.body.price;
     }
 
-    if (req.file) {
-        res.product.image = req.file.filename;
-    }
     try {
         // Delete old image if a new image is uploaded
         if (req.file) {
             const oldImagePath = path.join('./public/images', res.product.image);
-            fs.unlinkSync(oldImagePath); // Delete old image
+            
+            // Asynchronously delete the old image
+            await new Promise((resolve, reject) => {
+                fs.unlink(oldImagePath, (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                });
+            });
+
+            // Resize and save the new image
             const resizedImage = await sharp(req.file.path)
                 .resize(800, 600)
                 .toBuffer();
             await sharp(resizedImage).toFile(req.file.path);
+
+            // Update the product with the new image filename
+            res.product.image = req.file.filename;
         }
 
         const updatedProduct = await res.product.save();
@@ -105,6 +115,7 @@ router.patch('/:id', upload.single('image'), getProduct, async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 });
+
 
 
 // DELETE a product

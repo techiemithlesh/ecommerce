@@ -1,7 +1,6 @@
 const express = require('express');
 require('dotenv').config();
 const bodyParser = require('body-parser');
-const projectRouter = require('./routes/projects');
 const userRouter = require('./routes/auth');
 const productRouter = require('./routes/products');
 
@@ -23,13 +22,16 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
   });
 
+// app.get('/',  async(req, res)=> {
+//   res.send("Working");
+// })
+
 
 // Parse incoming request body
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
 
-app.use('/api/projects', projectRouter);
 app.use('/api/products', productRouter);
 app.use('/api/auth', userRouter);
 
