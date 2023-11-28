@@ -7,7 +7,6 @@ import Service from './Service';
 
 const Home = ({addToCart}) => {
  
-
   return (
     <div >
       <Slider/>

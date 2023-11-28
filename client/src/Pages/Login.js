@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "./Login.css";
 import siginImg from "../assests/signin.jpg";
 import { NavLink, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
 const Login = () => {
   const data = { name: "", email: "", password: "" };
   const [user, setUser] = useState(data);
@@ -36,7 +38,9 @@ const Login = () => {
         if (userLogin.length === 0) {
           alert("invalid details");
         } else {
-          console.log("user login succesfully");
+          toast.success("Login Successfully !", {
+            position: 'top-right'
+          });
           history("/");
         }
       }

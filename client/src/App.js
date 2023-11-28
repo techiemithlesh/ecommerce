@@ -29,7 +29,6 @@ import ProductDetails from './Pages/ProductDetails';
 function App() {
   const [cart, setCart] = useState([]);
 
-
   // Check if the current route is an admin route
   const isAdminRoute = window.location.pathname.startsWith('/admin');
 

@@ -8,6 +8,10 @@ import { AiOutlineClose } from "react-icons/ai";
 const NavBar = ({count}) => {
   const [click, setClick] = useState(false);
   
+  const userData = JSON.parse(localStorage.getItem('users'));
+  
+  const userName = userData ? userData[0].name : null;
+
 
   const handleClick = () => setClick(!click);
 
@@ -65,11 +69,21 @@ const NavBar = ({count}) => {
             </li>
           </ul>
           <div className="login-cart">
-          <p><NavLink to="/login"   exact
+          {userName ? (
+            <p className="text-primary">{userName.toUpperCase()}</p>
+          ) : (
+            <p>
+              <NavLink
+                to="/login"
+                exact
                 activeClassName="active"
                 className="nav-links"
-                >Login</NavLink></p>
-                <p>
+              >
+                Login
+              </NavLink>
+            </p>
+          )}
+            <p>
                 <NavLink to="/cartlist"   exact
                 activeClassName="active"
                 className="nav-links"
