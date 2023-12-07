@@ -8,6 +8,7 @@ const AdminSignup = () => {
     name: '',
     email: '',
     password: '',
+    userType: 'admin',
   });
 
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const AdminSignup = () => {
       const response = await axios.post('http://localhost:5000/api/auth/register', formData);
       console.log('Registration successful', response.data);
       navigate('/admin/dashboard');
-    toast.success("Login Successfully", {
+    toast.success("Account Created Successfully !", {
     position: 'top-right',
                 });
      

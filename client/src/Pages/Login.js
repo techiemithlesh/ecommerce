@@ -1,60 +1,58 @@
-import React, { useState } from "react";
-import "./Login.css";
-import siginImg from "../assests/signin.jpg";
-import { NavLink, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import { useState } from "react";
 import toast from "react-hot-toast";
+import { NavLink, useNavigate } from "react-router-dom";
+import axios from 'axios';
+
 
 const Login = () => {
-  const data = { name: "", email: "", password: "" };
+  const data = { email: "", password: "" };
   const [user, setUser] = useState(data);
+  const [loading, setLoading] = useState(false);
   const history = useNavigate();
-
-  const HandleChange = (e) => {
+  const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const Handlesubmit = (e) => {
-    let getuserArr = JSON.parse(localStorage.getItem("users"));
-
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (user.email === "") {
-      alert("Please enter a Email");
-    } else if (user.email.indexOf("@") <= 0) {
-      alert(" @ Invalid position");
-    } else if (
-      user.email.charAt(user.email.length - 4) != "." &&
-      user.email.charAt(user.email.length - 3 != ".")
-    ) {
-      alert(" . invalid position");
-    } else if (user.password === "") {
-      alert("please enter password");
-    } else if (user.password.length <= 5 || user.password.length > 20) {
-      alert("password length must be between 5 and 20");
-    } else {
-      if (getuserArr && getuserArr.length) {
-        const userLogin = getuserArr.filter((el, i) => {
-          return el.email === user.email && el.password === user.password;
-        });
-        if (userLogin.length === 0) {
-          alert("invalid details");
-        } else {
-          toast.success("Login Successfully !", {
-            position: 'top-right'
-          });
-          history("/");
-        }
-      }
+
+    try {
+      setLoading(true);
+
+      const response = await axios.post('http://localhost:5000/api/auth/login', user);
+      Cookies.set('userData', JSON.stringify(response.data));
+
+      toast.success("Login Successfully!", {
+        position: 'top-right',
+      });
+
+      const userType = response.data.userType;
+
+      if (userType === 'user') {
+        history("/");
+      } 
+
+    } catch (error) {
+      console.error('Login failed', error.response.data);
+
+      toast.error(error.response.data.message || 'Login error!', {
+        position: 'bottom-right',
+      });
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <div className="sigin-flex">
       <div className="sigin-left">
-        <form onSubmit={Handlesubmit}>
+        <form onSubmit={handleSubmit}>
           <input
             autoComplete="off"
             type="text"
             placeholder="Write your Email"
-            onChange={HandleChange}
+            onChange={handleChange}
             name="email"
             value={user.email}
           />
@@ -62,12 +60,12 @@ const Login = () => {
             autoComplete="off"
             type="password"
             placeholder="Write your Password"
-            onChange={HandleChange}
+            onChange={handleChange}
             name="password"
             value={user.password}
           />
-          <button className="form-btn" type="submit">
-            Login in
+          <button className="form-btn" type="submit" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
           </button>
           <p>
             Do you have an Account?{" "}
@@ -76,10 +74,6 @@ const Login = () => {
             </NavLink>
           </p>
         </form>
-      </div>
-
-      <div className="sigin-img-left">
-        <img src={siginImg} alt="" />
       </div>
     </div>
   );

@@ -34,7 +34,6 @@ const PopularProducts = ({ addToCart }) => {
   product.map((item, index) => (
     <div key={index} className="popular-img-content">
       <Link to={`/product/${item._id}`}>
-      {console.log(product._id)}
       <img src={`http://localhost:5000//images/${item.image}`} alt={item.title} />
       <p>{item.title}</p>
       <p>Price: {item.price}</p>

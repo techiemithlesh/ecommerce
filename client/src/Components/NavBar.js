@@ -1,19 +1,49 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./NavBar.css";
 import { NavLink } from "react-router-dom";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { BiCart } from "react-icons/bi";
 import { AiOutlineClose } from "react-icons/ai";
+import toast from "react-hot-toast";
+import Cookies from 'js-cookie';
 
 const NavBar = ({count}) => {
   const [click, setClick] = useState(false);
-  
-  const userData = JSON.parse(localStorage.getItem('users'));
-  
-  const userName = userData ? userData[0].name : null;
+  const [isLogedIn, setIsLogedIn] = useState(false);
+  const [userName, setUserName] = useState(null);
+  const [, forceUpdate] = useState();
 
+  const userData = Cookies.get('userData');
+ console.log("usrdata new", userData);
+ 
+ useEffect(() => {
+ 
+  const checkUserLogin = () => {
+    
+    if (userData) {
+      const parsedUserData = JSON.parse(userData);
 
+      if (parsedUserData && parsedUserData.name) {
+        setIsLogedIn(true);
+        setUserName(parsedUserData.name);
+      }
+    }
+  };
+
+  checkUserLogin();
+}, [userData])
+  
   const handleClick = () => setClick(!click);
+
+  const logout = () => {
+    Cookies.remove('userData');
+    setIsLogedIn(false);
+    setUserName(null);
+    toast.error("Logout Successfullt! ", {
+      position: 'top-right'
+    })
+
+  }
 
   return (
     <nav className="navbar">
@@ -83,6 +113,13 @@ const NavBar = ({count}) => {
               </NavLink>
             </p>
           )}
+
+          {isLogedIn ? <p>
+              <NavLink to='/' className='nav-links' onClick={logout}>
+                Logout
+              </NavLink>
+            </p> : ''}
+            
             <p>
                 <NavLink to="/cartlist"   exact
                 activeClassName="active"

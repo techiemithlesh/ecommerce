@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 
 router.post('/register', async (req, res) => {
     try {
-        const {name, email, password} = req.body;
+        const {name, email, password, userType} = req.body;
 
         // Check if user already exist or not
          const existingUser = await User.findOne({email});
@@ -23,7 +23,8 @@ router.post('/register', async (req, res) => {
         const user = User.create({
             name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            userType
         });
 
         const token = jwt.sign({userId: (await user)._id}, process.env.JWT_SECRET, {expiresIn: '1d'});
@@ -56,7 +57,7 @@ router.post('/login', async (req,res) => {
         }
 
         const token = jwt.sign({userId: (await user)._id}, process.env.JWT_SECRET, {expiresIn: '1d'});
-        res.json({token});
+        res.json({token, userType: user.userType, name: user.name});
 
     } catch (error) {
         console.error(error);
